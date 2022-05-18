@@ -9,8 +9,8 @@ namespace csharp_biblioteca
     internal class Biblioteca
     {
         private string nome;
-        /*
         public List<Documento> Documenti;
+        /*
         public List<Prestito> Prestito;
         */
 
@@ -20,6 +20,7 @@ namespace csharp_biblioteca
         {
             this.nome = nome;
             this.Utenti = new Dictionary<string, Utente>();
+            this.Documenti = new List<Documento>();
         }
 
         public void AddUtente(string nome, string cognome, string email, string password, string telefono)
@@ -30,6 +31,19 @@ namespace csharp_biblioteca
                 this.Utenti.Add(nuovoUtente.KeyGenerator(), nuovoUtente);
             }
             catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        public void AddLibro(string titolo, string autore, int anno, string ISBN, int categoria, int stato)
+        {
+            try
+            {
+                Libro nuovoLibro = new Libro(titolo, autore, anno, ISBN, categoria, stato);
+                Documenti.Add(nuovoLibro);
+            }
+            catch(Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
