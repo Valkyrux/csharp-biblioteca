@@ -9,11 +9,13 @@ namespace csharp_biblioteca
     internal class Documento
     {
         protected string titolo;
-        public string Titolo { get => this.titolo;}
+        public string Titolo { get => this.titolo; }
         protected List<Persona> autori;
+        public List<Persona> Autori { get => this.autori; }
         protected int anno;
+        public int Anno { get => this.anno; }
         public enum Categoria { storia, matematica, informatica, arte, musica, scienze }
-        public enum Stato { in_presito, disponibile, in_consegna, in_riparazione }
+        public enum Stato { in_prestito, disponibile, in_consegna, in_riparazione }
         
         public Documento(string titolo, List<Persona> autori, int anno)
         {
@@ -35,6 +37,11 @@ namespace csharp_biblioteca
         public virtual string getCodice()
         {
             return "NULL";
+        }
+
+        public virtual string getType()
+        {
+            return "DOCUMENTO";
         }
     }
 }

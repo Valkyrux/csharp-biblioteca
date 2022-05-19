@@ -136,6 +136,7 @@ namespace csharp_biblioteca
                                     Console.WriteLine(ex.Message);
                                 }
                                 callToAction();
+
                             }
 
                             break;
@@ -203,9 +204,90 @@ namespace csharp_biblioteca
                 miaBiblioteca.AddUtente("Giuseppe", "Savoia", "email@email.com", "12345", "3285754639");
             }
 
-            miaBiblioteca.AddLibro("ciao", new List<Persona> { new Persona("ciao" ,"pippo"), new Persona("ciao", "ciro") }, 2022, "cuufaigi", 0, 1000, 0);
-            miaBiblioteca.AddLibro("ciao", new List<Persona> { new Persona("Leggistringhe", "Intero"), new Persona("Piero", "Sortpagine") }, 2022, "cuufaigi", 0, 1000, 0);
-            miaBiblioteca.AddLibro("ciao", new List<Persona> { new Persona("Piero", "Sortpagine") }, 2022, "cuufaigi", 0, 1000, 0);
+            if (File.Exists(fileNameDocumenti))
+            {
+                string[] ListaDocumentiDaFile = File.ReadAllLines(fileNameDocumenti);
+
+                for (int i = 0; i < ListaDocumentiDaFile.Length; i ++)
+                {
+                    string[] documentoInArray = ListaDocumentiDaFile[i].Split('|');
+                    foreach(var element in ListaDocumentiDaFile[i].Split('|')){
+                        Console.WriteLine(element);
+                    };
+                    if(documentoInArray[0] == "LIBRO")
+                    {
+                        List<Persona> autori = new List<Persona>();
+                        if (documentoInArray.Length == 8)
+                        {
+                            string[] autorArray = documentoInArray[7].Split(':');
+                            for (int j = 0; j < autorArray.Length; j += 2)
+                            {
+                                autori.Add(new Persona(autorArray[j], autorArray[j + 1]));
+                            }
+
+                        }
+
+                        int anno;
+                        int categoria;
+                        switch(documentoInArray[4])
+                        {
+                            case "storia":
+                                categoria = 0;
+                                break;
+                            case "matematica":
+                                categoria = 1;
+                                break;
+                            case "informatica":
+                                categoria = 2;
+                                break;
+                            case "arte":
+                                categoria = 3;
+                                break;
+                            case "musica":
+                                categoria = 4;
+                                break;
+                            case "scienze":
+                                categoria = 5;
+                                break;
+                            default:
+                                categoria = 7;
+                                break;
+                        }
+                        
+                        int numPagine;
+                        
+                        int stato;
+                        switch (documentoInArray[6])
+                        {
+                            case "in_prestito":
+                                stato = 0;
+                                break;
+                            case "disponibile":
+                                stato = 1;
+                                break;
+                            case "in_consegna":
+                                stato = 2;
+                                break;
+                            case "in_riparazione":
+                                stato = 3;
+                                break;
+                            default:
+                                stato = 4;
+                                break;
+                        }
+                        if (int.TryParse(documentoInArray[2], out anno) && int.TryParse(documentoInArray[5], out numPagine))
+                        {
+                            miaBiblioteca.AddLibro(documentoInArray[1], autori, anno, documentoInArray[3], categoria, numPagine, stato);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                miaBiblioteca.AddLibro("ciao", new List<Persona> { new Persona("ciao" ,"pippo"), new Persona("ciao", "ciro") }, 2022, "cuufaigi", 0, 1000, 0);
+                miaBiblioteca.AddLibro("ciao", new List<Persona> { new Persona("Leggistringhe", "Intero"), new Persona("Piero", "Sortpagine") }, 2022, "cuufaigi", 0, 1000, 0);
+                miaBiblioteca.AddLibro("ciao", new List<Persona> { new Persona("Piero", "Sortpagine") }, 2022, "cuufaigi", 0, 1000, 0);               
+            }
 
             Console.WriteLine("Benvenuto in '{0}'", miaBiblioteca.Nome.ToUpper());
             Console.WriteLine("{0} utenti registati, {1} documenti totali\n", miaBiblioteca.DatiUtentiDaSalvare().Count()/5, miaBiblioteca.Documenti.Count());
@@ -221,13 +303,19 @@ namespace csharp_biblioteca
                     try
                     {
                         StreamWriter streamWriterUtenti = File.CreateText(fileNameUtenti);
-                        //StreamWriter streamWriterDocumenti = File.CreateText(fileNameDocumenti);
+                        StreamWriter streamWriterDocumenti = File.CreateText(fileNameDocumenti);
 
                         foreach (string? elemento in miaBiblioteca.DatiUtentiDaSalvare())
                         {
                             streamWriterUtenti.WriteLine(elemento);
                         }
+
+                        foreach (string? documento in miaBiblioteca.DatiDocumentiDaSalvare())
+                        {
+                            streamWriterDocumenti.WriteLine(documento);
+                        }
                         streamWriterUtenti.Close();
+                        streamWriterDocumenti.Close();
                         checkValue = false;
                     }
                     catch

@@ -27,8 +27,34 @@ namespace csharp_biblioteca
                 utentiPresenti.Add(elementoDizionario.Value.password);
                 utentiPresenti.Add(elementoDizionario.Value.telefono);
             }
-            Console.WriteLine(String.Format(" ", utentiPresenti));
+
             return utentiPresenti;         
+        }
+
+        public List<string?> DatiDocumentiDaSalvare()
+        {
+            List<string?> documentiPresenti = new List<string?>();
+
+            foreach (Libro documento in this.Documenti)
+            {
+                string stringAutori = "";
+                int counter = 0;
+                foreach (Persona autore in documento.Autori)
+                {
+                    counter++;
+                    if(counter != documento.Autori.Count())
+                    {
+                        stringAutori += (autore.nome + ":" + autore.cognome + ":");
+                    }
+                    else
+                    {
+                        stringAutori += (autore.nome + ":" + autore.cognome);
+                    }
+                }
+                documentiPresenti.Add(String.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}", documento.getType(), documento.Titolo, documento.Anno, documento.isbn, documento.settore, documento.NrPagine, documento.statoLibro, stringAutori));
+                
+            }
+            return documentiPresenti;
         }
 
         public Biblioteca(string nome)

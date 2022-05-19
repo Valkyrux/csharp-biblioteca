@@ -9,7 +9,9 @@ namespace csharp_biblioteca
     internal class Libro : Documento
     {
         protected string ISBN;
+        public string isbn { get => this.ISBN; }
         protected int numeroDiPagine;
+        public int NrPagine { get => this.numeroDiPagine; }
         public Categoria settore;
         public Stato statoLibro;
 
@@ -28,6 +30,11 @@ namespace csharp_biblioteca
         public override string getCodice()
         {
             return this.ISBN;
+        }
+
+        public override string getType()
+        {
+            return "LIBRO";
         }
     }
 }
