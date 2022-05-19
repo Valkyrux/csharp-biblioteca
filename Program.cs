@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 namespace csharp_biblioteca
 {
@@ -97,8 +98,29 @@ namespace csharp_biblioteca
         static void Main(string[] args)
         {
             Biblioteca miaBiblioteca = new Biblioteca("Biblioteca Digitale");
+
+            string fileName = "lista_utenti.txt";
+            if (File.Exists(fileName))
+            {
+                string[] ListaUtentiDaFile = File.ReadAllLines(fileName);
+
+                Console.WriteLine(ListaUtentiDaFile.Length);
+
+  
+                if(ListaUtentiDaFile.Length > 1)
+                {
+                    for (int i = 0; i < ListaUtentiDaFile.Length; i += 5)
+                    {
+                        miaBiblioteca.AddUtente(ListaUtentiDaFile[i], ListaUtentiDaFile[i + 1], ListaUtentiDaFile[i + 2], ListaUtentiDaFile[i + 3], ListaUtentiDaFile[i + 4]);
+                    }
+                }
+            }
+            else
+            {
+                File.Create(fileName);
+            }
+
             miaBiblioteca.AddUtente("Giuseppe", "Savoia", "email@email.com", "12345", "3285754639");
-            miaBiblioteca.AddUtente("Giuseppe", "savoia", "email@email.com", "12345", "3285754639");
             miaBiblioteca.AddLibro("ciao", new List<Persona> { new Persona("ciao" ,"pippo"), new Persona("ciao", "ciro") }, 2022, "cuufaigi", 0, 1000, 0);
             miaBiblioteca.AddLibro("ciao", new List<Persona> { new Persona("Leggistringhe", "Intero"), new Persona("Piero", "Sortpagine") }, 2022, "cuufaigi", 0, 1000, 0);
             miaBiblioteca.AddLibro("ciao", new List<Persona> { new Persona("Piero", "Sortpagine") }, 2022, "cuufaigi", 0, 1000, 0);
@@ -114,6 +136,12 @@ namespace csharp_biblioteca
                 GestoreOperazioni(miaBiblioteca, sChooice);
                 sChooice = Console.ReadLine();
             }
+            StreamWriter streamWriter = File.CreateText(fileName);
+
+            foreach (string elemento in miaBiblioteca.DatiUtentiDaSalvare()) { 
+                streamWriter.WriteLine(elemento);
+            }
+            streamWriter.Close();
         }
     }
 }

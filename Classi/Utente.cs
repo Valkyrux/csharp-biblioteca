@@ -9,7 +9,7 @@ namespace csharp_biblioteca
     internal class Utente : Persona
     {
         public string email;
-        private string password;
+        public string password;
         public string? telefono;
 
         public Utente(string nome, string cognome, string email, string password, string telefono) : base(nome, cognome)

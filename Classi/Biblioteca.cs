@@ -15,6 +15,21 @@ namespace csharp_biblioteca
         */
 
         private Dictionary<string, Utente> Utenti;
+        public List<string?> DatiUtentiDaSalvare() 
+        {
+            List<string?> utentiPresenti = new List<string?>();
+     
+            foreach (var elementoDizionario in this.Utenti)
+            {
+                utentiPresenti.Add(elementoDizionario.Value.nome);
+                utentiPresenti.Add(elementoDizionario.Value.cognome);
+                utentiPresenti.Add(elementoDizionario.Value.email);
+                utentiPresenti.Add(elementoDizionario.Value.password);
+                utentiPresenti.Add(elementoDizionario.Value.telefono);
+            }
+            Console.WriteLine(String.Format(" ", utentiPresenti));
+            return utentiPresenti;         
+        }
 
         public Biblioteca(string nome)
         {
