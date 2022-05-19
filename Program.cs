@@ -40,27 +40,51 @@ namespace csharp_biblioteca
                     {
                         Console.WriteLine("!!!  Utente Aggiunto con successo  !!!");
                     };
-                    Console.WriteLine("\nCosa vuoi Fare? (premi h per mostrare il MENU, INVIO per USCIRE)");
+                    Console.WriteLine("\n@--------------------------------------------------------------------@");
+                    Console.WriteLine("|  Cosa vuoi Fare? (premi h per mostrare il MENU, INVIO per USCIRE)  |");
+                    Console.WriteLine("@--------------------------------------------------------------------@\n");
                     break;
                 case "2":
                     Console.WriteLine("\n****** CERCA UTENTE ******\n");
-                    Console.WriteLine("Inserisci Nome");
+                    Console.WriteLine("-> Inserisci Nome");
                     nome = Console.ReadLine();
-                    Console.WriteLine("Inserisci Cognome");
+                    Console.WriteLine("-> Inserisci Cognome");
                     cognome = Console.ReadLine();
-                    Console.WriteLine("Inserisci e mail");
+                    Console.WriteLine("-> Inserisci e mail");
                     eMail = Console.ReadLine();
                     Console.WriteLine(miaBiblioteca.WriteUtente(miaBiblioteca.KeyGenerator(nome, cognome, eMail)));
-                    Console.WriteLine("\nCosa vuoi Fare? (premi h per mostrare il MENU, INVIO per USCIRE)");
+                    Console.WriteLine("\n@--------------------------------------------------------------------@");
+                    Console.WriteLine("|  Cosa vuoi Fare? (premi h per mostrare il MENU, INVIO per USCIRE)  |");
+                    Console.WriteLine("@--------------------------------------------------------------------@\n");
                     break;
                 case "3":
                     Console.WriteLine("\n****** CERCA DOCUMENTO ******\n");
-                    Console.WriteLine("Inserisci Titolo");
-                    string? titolo = Console.ReadLine();
-                    List<Documento>risultatoFiltro = miaBiblioteca.FiltraPerTitolo(titolo);
-                    Console.WriteLine("Risutati trovati: {0}", risultatoFiltro.Count());
-                    risultatoFiltro.ForEach(p => Console.WriteLine("{0}", p.Write()));
-                    Console.WriteLine("\nCosa vuoi Fare? (premi h per mostrare il MENU, INVIO per USCIRE)");
+                    Console.WriteLine("  -  Digita 1: Cerca per Titolo\n  -  Digita 2: Cerca per Codice\n  -  Qualsiasi altro input per uscire");
+                    string searchChooice = Console.ReadLine();
+                    switch (searchChooice)
+                    {
+                        case "1":
+                            Console.WriteLine("-> Inserisci Titolo");
+                            string? titolo = Console.ReadLine();
+                            List<Documento>risultatoFiltro = miaBiblioteca.FiltraPerTitolo(titolo);
+                            Console.WriteLine("Risutati trovati: {0}", risultatoFiltro.Count());
+                            risultatoFiltro.ForEach(p => Console.WriteLine("{0}", p.Write()));
+                            
+                            break;
+                        case "2":
+                            Console.WriteLine("-> Inserisci Codice");
+                            string? codice = Console.ReadLine();
+                            risultatoFiltro = miaBiblioteca.FiltraPerCodice(codice);
+                            Console.WriteLine("Risutati trovati: {0}", risultatoFiltro.Count());
+                            risultatoFiltro.ForEach(p => Console.WriteLine("{0}", p.Write()));
+                            break;
+                        default:
+                            Console.WriteLine("USCITA");
+                            break;
+                    }
+                    Console.WriteLine("\n@--------------------------------------------------------------------@");
+                    Console.WriteLine("|  Cosa vuoi Fare? (premi h per mostrare il MENU, INVIO per USCIRE)  |");
+                    Console.WriteLine("@--------------------------------------------------------------------@\n");
                     break;
                 case "h":
                     showMenu();
@@ -75,9 +99,10 @@ namespace csharp_biblioteca
             Biblioteca miaBiblioteca = new Biblioteca("Biblioteca Digitale");
             miaBiblioteca.AddUtente("Giuseppe", "Savoia", "email@email.com", "12345", "3285754639");
             miaBiblioteca.AddUtente("Giuseppe", "savoia", "email@email.com", "12345", "3285754639");
-            miaBiblioteca.AddLibro("ciao", "Paolo", 2022, "cuufaigi", 2, 0);
-            miaBiblioteca.AddLibro("ciao", "Salvo", 2022, "cuufaigi", 2, 0);
-            miaBiblioteca.AddLibro("ciao", "Enrico", 2022, "cuufaigi", 2, 0);
+            miaBiblioteca.AddLibro("ciao", new List<Persona> { new Persona("ciao" ,"pippo"), new Persona("ciao", "ciro") }, 2022, "cuufaigi", 0, 1000, 0);
+            miaBiblioteca.AddLibro("ciao", new List<Persona> { new Persona("Leggistringhe", "Intero"), new Persona("Piero", "Sortpagine") }, 2022, "cuufaigi", 0, 1000, 0);
+            miaBiblioteca.AddLibro("ciao", new List<Persona> { new Persona("Piero", "Sortpagine") }, 2022, "cuufaigi", 0, 1000, 0);
+
             Console.WriteLine(miaBiblioteca.Documenti[0].Write());
 
             Console.WriteLine("Benvenuto in '{0}'\n", miaBiblioteca.Nome.ToUpper());

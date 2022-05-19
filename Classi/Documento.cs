@@ -10,21 +10,31 @@ namespace csharp_biblioteca
     {
         protected string titolo;
         public string Titolo { get => this.titolo;}
-        protected string autore;
+        protected List<Persona> autori;
         protected int anno;
         public enum Categoria { storia, matematica, informatica, arte, musica, scienze }
         public enum Stato { in_presito, disponibile, in_consegna, in_riparazione }
         
-        public Documento(string titolo, string autore, int anno)
+        public Documento(string titolo, List<Persona> autori, int anno)
         {
             this.titolo = titolo;
-            this.autore = autore;
+            this.autori = autori;
             this.anno = anno;
         }
 
         public virtual string Write()
         {
-            return String.Format("TITOLO: {0}\nAUTORE: {1}\nANNO: {2}\n", this.titolo, this.autore, this.anno);
+            StringBuilder stringBuilder = new StringBuilder();
+            foreach (Persona persona in this.autori)
+            {
+                stringBuilder.Append(persona.ToString());
+                stringBuilder.Append(", ");
+            }
+            return String.Format("TITOLO: {0}\nAUTORE: {1}\nANNO: {2}\n", this.titolo, stringBuilder.ToString(), this.anno);
+        }
+        public virtual string getCodice()
+        {
+            return "NULL";
         }
     }
 }

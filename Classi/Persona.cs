@@ -16,5 +16,10 @@ namespace csharp_biblioteca
             this.nome = nome;
             this.cognome = cognome;
         }
+
+        public override string ToString()
+        {
+            return string.Format("{0} {1}", this.nome, this.cognome);
+        }
     }
 }

@@ -68,11 +68,19 @@ namespace csharp_biblioteca
             return list;
         }
 
-        public void AddLibro(string titolo, string autore, int anno, string ISBN, int categoria, int stato)
+        public List<Documento> FiltraPerCodice(string codice)
+        {
+            List<Documento> list = new List<Documento>();
+
+            list = this.Documenti.Where(p => p.getCodice().Contains(codice)).ToList();
+            return list;
+        }
+
+        public void AddLibro(string titolo, List<Persona> autore, int anno, string ISBN, int categoria, int numeroDiPagine, int stato)
         {
             try
             {
-                Libro nuovoLibro = new Libro(titolo, autore, anno, ISBN, categoria, stato);
+                Libro nuovoLibro = new Libro(titolo, autore, anno, ISBN, categoria, numeroDiPagine, stato);
                 Documenti.Add(nuovoLibro);
             }
             catch(Exception ex)
