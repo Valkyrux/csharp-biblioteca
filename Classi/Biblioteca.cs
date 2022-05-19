@@ -14,7 +14,7 @@ namespace csharp_biblioteca
         public List<Prestito> Prestito;
         */
 
-        private Dictionary<string, Utente> Utenti;
+        private Dictionary<Tuple<string, string, string>, Utente> Utenti;
         public List<string?> DatiUtentiDaSalvare() 
         {
             List<string?> utentiPresenti = new List<string?>();
@@ -34,7 +34,7 @@ namespace csharp_biblioteca
         public Biblioteca(string nome)
         {
             this.nome = nome;
-            this.Utenti = new Dictionary<string, Utente>();
+            this.Utenti = new Dictionary<Tuple<string, string, string>, Utente>();
             this.Documenti = new List<Documento>();
         }
 
@@ -54,17 +54,17 @@ namespace csharp_biblioteca
                 return false;
             }
         }
-        public string KeyGenerator(Utente utente)
+        public Tuple<string, string, string> KeyGenerator(Utente utente)
         {
-            return string.Format("{0};{1};{2}", utente.nome.ToLower(), utente.cognome.ToLower(), utente.email.ToLower());
+            return new Tuple<string, string, string>(utente.nome.ToLower(), utente.cognome.ToLower(), utente.email.ToLower());
         }
 
-        public string KeyGenerator(string nome, string cognome, string email)
+        public Tuple<string, string, string> KeyGenerator(string nome, string cognome, string email)
         {
-            return string.Format("{0};{1};{2}", nome.ToLower(),cognome.ToLower(), email.ToLower());
+            return new Tuple<string, string, string>(nome.ToLower(),cognome.ToLower(), email.ToLower());
         }
 
-        public string WriteUtente(string key)
+        public string WriteUtente(Tuple<string, string, string> key)
         {
             try
             {

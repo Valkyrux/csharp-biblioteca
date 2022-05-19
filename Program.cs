@@ -53,6 +53,7 @@ namespace csharp_biblioteca
                     cognome = Console.ReadLine();
                     Console.WriteLine("-> Inserisci e mail");
                     eMail = Console.ReadLine();
+                    Console.WriteLine("_____________________________________");
                     Console.WriteLine(miaBiblioteca.WriteUtente(miaBiblioteca.KeyGenerator(nome, cognome, eMail)));
                     Console.WriteLine("\n@--------------------------------------------------------------------@");
                     Console.WriteLine("|  Cosa vuoi Fare? (premi h per mostrare il MENU, INVIO per USCIRE)  |");
@@ -138,7 +139,7 @@ namespace csharp_biblioteca
             }
             StreamWriter streamWriter = File.CreateText(fileName);
 
-            foreach (string elemento in miaBiblioteca.DatiUtentiDaSalvare()) { 
+            foreach (string? elemento in miaBiblioteca.DatiUtentiDaSalvare()) { 
                 streamWriter.WriteLine(elemento);
             }
             streamWriter.Close();
