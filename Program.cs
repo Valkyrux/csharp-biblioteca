@@ -10,8 +10,8 @@ namespace csharp_biblioteca
             Console.WriteLine("**********************************");
             Console.WriteLine("*      1 : Aggiungi Utente       *");
             Console.WriteLine("*        2 : Cerca Utente        *");
-            Console.WriteLine("*      3 : Cerca Documento       *");
-            Console.WriteLine("*      4 : Aggiungi Prestito     *");
+            Console.WriteLine("*     3 : Aggiungi Documento     *");
+            Console.WriteLine("*      4 : Cerca Documento       *");
             Console.WriteLine("*       help : Mostra menu       *");
             Console.WriteLine("*      Premi Invio per Uscire    *");
             Console.WriteLine("**********************************");
@@ -63,9 +63,94 @@ namespace csharp_biblioteca
                     callToAction();
                     break;
                 case "3":
+                    Console.WriteLine("\n****** AGGIUNGI DOCUMENTO ******\n");
+                    Console.WriteLine("  -  Digita 1: aggiungi Libro\n  -  Digita 2: Aggiungi DVD\n  -  Qualsiasi altro input per tornare al menu principale");
+                    string? addChoice = Console.ReadLine();
+                    switch (addChoice)
+                    {
+                        case "1":
+                            Console.WriteLine("-> Inserisci Titolo");
+                            string? titolo = Console.ReadLine();
+                            
+                            List<Persona> Autori = new List<Persona>();
+                            string? autoreNome;
+                            string? autoreCognome;
+                            bool Continue = true;
+                            Console.WriteLine("-> Inserisci Autori");
+                            while (Continue)
+                            {
+                                Console.WriteLine("  -> Inserisci il nome dell'autore");
+                                autoreNome = Console.ReadLine();
+                                Console.WriteLine("  -> Inserisci il cognome dell'autore");
+                                autoreCognome = Console.ReadLine();
+                                if (autoreNome != "" && autoreCognome != "" && autoreNome != null && autoreCognome != null)
+                                {
+                                    Autori.Add(new Persona(autoreNome, autoreCognome));
+                                    Console.WriteLine(" autore inserito con successo\n");
+                                }
+                                else
+                                {
+                                    Console.WriteLine(" autore non valido\n");
+                                }
+                                Console.WriteLine("Inserire un altro autore? digita 'SI' per continuare, qualsiasi altro input per passare alla voce successiva");
+                                string? inputToContinue = Console.ReadLine();
+                                if(inputToContinue != "SI")
+                                {
+                                   Continue = false;
+                                }
+
+                                Console.WriteLine("-> Inserisci Anno");
+                                int anno;
+                                int.TryParse(Console.ReadLine(), out anno);
+
+                                Console.WriteLine("-> Inserisci ISBN");
+                                string? ISBN = Console.ReadLine();
+
+                                Console.WriteLine("-> Inserisci Categoria");
+                                string[] categoryArray = Enum.GetNames<Documento.Categoria>();
+                                for (int i = 0; i<categoryArray.Length; i++)
+                                {
+                                    Console.WriteLine(" {0} per {1}", i, categoryArray[i]);
+                                }
+                                int categoria;
+                                int.TryParse(Console.ReadLine(), out categoria);
+
+                                Console.WriteLine("-> Inserisci Numero di Pagine");
+                                int numPagine;
+                                int.TryParse(Console.ReadLine(), out numPagine);
+
+                                Console.WriteLine("-> Inserisci stato");
+                                string[] stateArray = Enum.GetNames<Documento.Stato>();
+                                for (int i = 0; i < stateArray.Length; i++)
+                                {
+                                    Console.WriteLine(" {0} per {1}", i, stateArray[i]);
+                                }
+                                int stato;
+                                int.TryParse(Console.ReadLine(), out stato);
+                                try
+                                {
+                                    miaBiblioteca.AddLibro(titolo, Autori, anno, ISBN, categoria, numPagine, stato);
+                                    Console.WriteLine("Libro inserito con successo");
+                                }catch (Exception ex)
+                                {
+                                    Console.WriteLine(ex.Message);
+                                }
+                                callToAction();
+                            }
+
+                            break;
+                        case "2":
+                            Console.WriteLine("Operazione non implementata, ritorno al menu principale");
+                            break;
+                        default:
+                            Console.WriteLine("Operazione annullata");
+                            break;
+                    }
+                    break;
+                case "4":
                     Console.WriteLine("\n****** CERCA DOCUMENTO ******\n");
-                    Console.WriteLine("  -  Digita 1: Cerca per Titolo\n  -  Digita 2: Cerca per Codice\n  -  Qualsiasi altro input per uscire");
-                    string searchChooice = Console.ReadLine();
+                    Console.WriteLine("  -  Digita 1: Cerca per Titolo\n  -  Digita 2: Cerca per Codice\n  -  Qualsiasi altro input per tornare al menu principale");
+                    string? searchChooice = Console.ReadLine();
                     switch (searchChooice)
                     {
                         case "1":
@@ -83,9 +168,7 @@ namespace csharp_biblioteca
                             Console.WriteLine("Risutati trovati: {0}", risultatoFiltro.Count());
                             risultatoFiltro.ForEach(p => Console.WriteLine("{0}", p.Write()));
                             break;
-                        default:
-                            Console.WriteLine("USCITA");
-                            break;
+                        
                     }
                     callToAction();
                     break;
@@ -93,10 +176,10 @@ namespace csharp_biblioteca
                     showMenu();
                     break;
                 case "":
-                    Console.WriteLine("USCITA");
+                    Console.WriteLine("A presto!");
                     break;
                 default: 
-                    Console.WriteLine("Operazione NON valida (premi h per visualizzare la lista di operazioni)");
+                    Console.WriteLine("Operazione NON valida (digita help per visualizzare la lista di operazioni disponibili)");
                     break;
             }
         }
@@ -104,13 +187,11 @@ namespace csharp_biblioteca
         {
             Biblioteca miaBiblioteca = new Biblioteca("Biblioteca Digitale");
 
-            string fileName = "lista_utenti.txt";
-            if (File.Exists(fileName))
+            string fileNameUtenti = "lista_utenti.txt";
+            string fileNameDocumenti = "lista_documenti.txt";
+            if (File.Exists(fileNameUtenti))
             {
-                string[] ListaUtentiDaFile = File.ReadAllLines(fileName);
-
-                Console.WriteLine(ListaUtentiDaFile.Length);
-
+                string[] ListaUtentiDaFile = File.ReadAllLines(fileNameUtenti);
   
                 for (int i = 0; i < ListaUtentiDaFile.Length; i += 5)
                 {
@@ -126,7 +207,8 @@ namespace csharp_biblioteca
             miaBiblioteca.AddLibro("ciao", new List<Persona> { new Persona("Leggistringhe", "Intero"), new Persona("Piero", "Sortpagine") }, 2022, "cuufaigi", 0, 1000, 0);
             miaBiblioteca.AddLibro("ciao", new List<Persona> { new Persona("Piero", "Sortpagine") }, 2022, "cuufaigi", 0, 1000, 0);
 
-            Console.WriteLine("Benvenuto in '{0}'\n", miaBiblioteca.Nome.ToUpper());
+            Console.WriteLine("Benvenuto in '{0}'", miaBiblioteca.Nome.ToUpper());
+            Console.WriteLine("{0} utenti registati, {1} documenti totali\n", miaBiblioteca.DatiUtentiDaSalvare().Count()/5, miaBiblioteca.Documenti.Count());
             showMenu();
 
             string? sChooice;
@@ -138,12 +220,14 @@ namespace csharp_biblioteca
                 {
                     try
                     {
-                        StreamWriter streamWriter = File.CreateText(fileName);
+                        StreamWriter streamWriterUtenti = File.CreateText(fileNameUtenti);
+                        //StreamWriter streamWriterDocumenti = File.CreateText(fileNameDocumenti);
+
                         foreach (string? elemento in miaBiblioteca.DatiUtentiDaSalvare())
                         {
-                            streamWriter.WriteLine(elemento);
+                            streamWriterUtenti.WriteLine(elemento);
                         }
-                        streamWriter.Close();
+                        streamWriterUtenti.Close();
                         checkValue = false;
                     }
                     catch
