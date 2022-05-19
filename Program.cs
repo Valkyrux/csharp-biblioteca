@@ -7,17 +7,24 @@ namespace csharp_biblioteca
     {
         static void showMenu()
         {
-            Console.WriteLine("*********************************");
-            Console.WriteLine("*     1 : Aggiungi Utente       *");
-            Console.WriteLine("*       2 : Cerca Utente        *");
-            Console.WriteLine("*     3 : Cerca Documento       *");
-            Console.WriteLine("*     4 : Aggiungi Prestito     *");
-            Console.WriteLine("*         h : Mostra menu       *");
-            Console.WriteLine("*     Premi Invio per Uscire    *");
-            Console.WriteLine("*********************************");
-            Console.WriteLine("\n@-------------------------------@");
-            Console.WriteLine("|        Cosa vuoi fare?        |");
-            Console.WriteLine("@-------------------------------@\n");
+            Console.WriteLine("**********************************");
+            Console.WriteLine("*      1 : Aggiungi Utente       *");
+            Console.WriteLine("*        2 : Cerca Utente        *");
+            Console.WriteLine("*      3 : Cerca Documento       *");
+            Console.WriteLine("*      4 : Aggiungi Prestito     *");
+            Console.WriteLine("*       help : Mostra menu       *");
+            Console.WriteLine("*      Premi Invio per Uscire    *");
+            Console.WriteLine("**********************************");
+            Console.WriteLine("\n@--------------------------------@");
+            Console.WriteLine("|         Cosa vuoi fare?        |");
+            Console.WriteLine("@--------------------------------@\n");
+        }
+
+        static void callToAction()
+        {
+            Console.WriteLine("\n@------------------------------------------------------------------------@");
+            Console.WriteLine("|  Cosa vuoi Fare? (digita help per mostrare il MENU, INVIO per USCIRE)  |");
+            Console.WriteLine("@------------------------------------------------------------------------@\n");
         }
 
         static void GestoreOperazioni(Biblioteca miaBiblioteca, string? sOperazione)
@@ -41,9 +48,7 @@ namespace csharp_biblioteca
                     {
                         Console.WriteLine("!!!  Utente Aggiunto con successo  !!!");
                     };
-                    Console.WriteLine("\n@--------------------------------------------------------------------@");
-                    Console.WriteLine("|  Cosa vuoi Fare? (premi h per mostrare il MENU, INVIO per USCIRE)  |");
-                    Console.WriteLine("@--------------------------------------------------------------------@\n");
+                    callToAction();
                     break;
                 case "2":
                     Console.WriteLine("\n****** CERCA UTENTE ******\n");
@@ -55,9 +60,7 @@ namespace csharp_biblioteca
                     eMail = Console.ReadLine();
                     Console.WriteLine("_____________________________________");
                     Console.WriteLine(miaBiblioteca.WriteUtente(miaBiblioteca.KeyGenerator(nome, cognome, eMail)));
-                    Console.WriteLine("\n@--------------------------------------------------------------------@");
-                    Console.WriteLine("|  Cosa vuoi Fare? (premi h per mostrare il MENU, INVIO per USCIRE)  |");
-                    Console.WriteLine("@--------------------------------------------------------------------@\n");
+                    callToAction();
                     break;
                 case "3":
                     Console.WriteLine("\n****** CERCA DOCUMENTO ******\n");
@@ -84,12 +87,13 @@ namespace csharp_biblioteca
                             Console.WriteLine("USCITA");
                             break;
                     }
-                    Console.WriteLine("\n@--------------------------------------------------------------------@");
-                    Console.WriteLine("|  Cosa vuoi Fare? (premi h per mostrare il MENU, INVIO per USCIRE)  |");
-                    Console.WriteLine("@--------------------------------------------------------------------@\n");
+                    callToAction();
                     break;
-                case "h":
+                case "help":
                     showMenu();
+                    break;
+                case "":
+                    Console.WriteLine("USCITA");
                     break;
                 default: 
                     Console.WriteLine("Operazione NON valida (premi h per visualizzare la lista di operazioni)");
@@ -108,41 +112,55 @@ namespace csharp_biblioteca
                 Console.WriteLine(ListaUtentiDaFile.Length);
 
   
-                if(ListaUtentiDaFile.Length > 1)
+                for (int i = 0; i < ListaUtentiDaFile.Length; i += 5)
                 {
-                    for (int i = 0; i < ListaUtentiDaFile.Length; i += 5)
-                    {
-                        miaBiblioteca.AddUtente(ListaUtentiDaFile[i], ListaUtentiDaFile[i + 1], ListaUtentiDaFile[i + 2], ListaUtentiDaFile[i + 3], ListaUtentiDaFile[i + 4]);
-                    }
+                    miaBiblioteca.AddUtente(ListaUtentiDaFile[i], ListaUtentiDaFile[i + 1], ListaUtentiDaFile[i + 2], ListaUtentiDaFile[i + 3], ListaUtentiDaFile[i + 4]);
                 }
             }
             else
             {
-                File.Create(fileName);
+                miaBiblioteca.AddUtente("Giuseppe", "Savoia", "email@email.com", "12345", "3285754639");
             }
 
-            miaBiblioteca.AddUtente("Giuseppe", "Savoia", "email@email.com", "12345", "3285754639");
             miaBiblioteca.AddLibro("ciao", new List<Persona> { new Persona("ciao" ,"pippo"), new Persona("ciao", "ciro") }, 2022, "cuufaigi", 0, 1000, 0);
             miaBiblioteca.AddLibro("ciao", new List<Persona> { new Persona("Leggistringhe", "Intero"), new Persona("Piero", "Sortpagine") }, 2022, "cuufaigi", 0, 1000, 0);
             miaBiblioteca.AddLibro("ciao", new List<Persona> { new Persona("Piero", "Sortpagine") }, 2022, "cuufaigi", 0, 1000, 0);
 
-            Console.WriteLine(miaBiblioteca.Documenti[0].Write());
-
             Console.WriteLine("Benvenuto in '{0}'\n", miaBiblioteca.Nome.ToUpper());
             showMenu();
-            
-            string? sChooice = Console.ReadLine();
 
-            while (sChooice != "") {
-                GestoreOperazioni(miaBiblioteca, sChooice);
+            string? sChooice;
+            bool checkValue = true;
+            while (checkValue) {
                 sChooice = Console.ReadLine();
+                GestoreOperazioni(miaBiblioteca, sChooice);
+                if(sChooice == "")
+                {
+                    try
+                    {
+                        StreamWriter streamWriter = File.CreateText(fileName);
+                        foreach (string? elemento in miaBiblioteca.DatiUtentiDaSalvare())
+                        {
+                            streamWriter.WriteLine(elemento);
+                        }
+                        streamWriter.Close();
+                        checkValue = false;
+                    }
+                    catch
+                    {
+                        Console.WriteLine("Impossibile al momento salvare le modifiche.\n-> digita exit per uscire\n-> qualisiasi altra cosa per tornare al menu");
+                        string? errorExitHandler = Console.ReadLine();
+                        if(errorExitHandler == "exit")
+                        {
+                            checkValue = false;
+                        }
+                        else
+                        {
+                            showMenu();
+                        }
+                    }
+                }
             }
-            StreamWriter streamWriter = File.CreateText(fileName);
-
-            foreach (string? elemento in miaBiblioteca.DatiUtentiDaSalvare()) { 
-                streamWriter.WriteLine(elemento);
-            }
-            streamWriter.Close();
         }
     }
 }
