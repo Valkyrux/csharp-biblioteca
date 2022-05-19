@@ -18,10 +18,5 @@ namespace csharp_biblioteca
             this.password = password;
             this.telefono = telefono;
         }
-
-        public string KeyGenerator()
-        {
-            return string.Format("{0};{1};{2}", base.nome.ToLower(), base.cognome.ToLower(), this.email.ToLower());
-        }
     }
 }

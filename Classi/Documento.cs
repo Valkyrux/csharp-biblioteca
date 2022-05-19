@@ -9,6 +9,7 @@ namespace csharp_biblioteca
     internal class Documento
     {
         protected string titolo;
+        public string Titolo { get => this.titolo;}
         protected string autore;
         protected int anno;
         public enum Categoria { storia, matematica, informatica, arte, musica, scienze }
