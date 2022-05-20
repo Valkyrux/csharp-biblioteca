@@ -193,14 +193,45 @@ namespace csharp_biblioteca
             string fileNameUtenti = "lista_utenti.txt";
             string fileNameDocumenti = "lista_documenti.txt";
             string folderName = "\\bool-experis-biblioteca";
-            string? pathToDirectory = Path.GetDirectoryName(evPublic);
             
-            if (!Directory.Exists(evPublic + folderName) && evPublic != null)
+            string pathToDirectory = evPublic + folderName;
+            
+            if (!File.Exists(pathToDirectory + "\\config.txt"))
             {
-                Directory.CreateDirectory(pathToDirectory + folderName);
-                fileNameUtenti = evPublic + fileNameUtenti;
-                fileNameDocumenti = evPublic + fileNameDocumenti;
+                if (!Directory.Exists(pathToDirectory))
+                {
+                    Directory.CreateDirectory(pathToDirectory);
+                }
+
+                StreamWriter config = new StreamWriter(pathToDirectory + "\\config.txt");
+                Console.WriteLine("File di configurazione non presente:\n-> Premi invio per istanziare una configurazione locale\n-> Digita il path per la cartella remota");
+                string? pathRemoto = Console.ReadLine();
+                if(pathRemoto != "")
+                {
+                    config.WriteLine("section:config_remota");
+                    config.WriteLine(pathRemoto);
+                    pathToDirectory = pathRemoto;
+                }
+                else
+                {
+                    config.WriteLine("section:config_locale");
+                }
+                config.Close();
+            } else 
+            {
+                StreamReader readConfig = new StreamReader(pathToDirectory + "\\config.txt");
+                if (readConfig.ReadLine() == "section:config_remota")
+                {
+                    pathToDirectory = readConfig.ReadLine();
+                    readConfig.Close();
+                }
+
             }
+            fileNameUtenti = pathToDirectory + @"\" + fileNameUtenti;
+            fileNameDocumenti = pathToDirectory + @"\" + fileNameDocumenti;
+            
+        
+           
             
             
             if (File.Exists(fileNameUtenti))
