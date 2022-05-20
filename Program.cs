@@ -188,8 +188,21 @@ namespace csharp_biblioteca
         {
             Biblioteca miaBiblioteca = new Biblioteca("Biblioteca Digitale");
 
+            string? evPublic = Environment.GetEnvironmentVariable("Public");
+
             string fileNameUtenti = "lista_utenti.txt";
             string fileNameDocumenti = "lista_documenti.txt";
+            string folderName = "\\bool-experis-biblioteca";
+            string? pathToDirectory = Path.GetDirectoryName(evPublic);
+            
+            if (!Directory.Exists(evPublic + folderName) && evPublic != null)
+            {
+                Directory.CreateDirectory(pathToDirectory + folderName);
+                fileNameUtenti = evPublic + fileNameUtenti;
+                fileNameDocumenti = evPublic + fileNameDocumenti;
+            }
+            
+            
             if (File.Exists(fileNameUtenti))
             {
                 string[] ListaUtentiDaFile = File.ReadAllLines(fileNameUtenti);
@@ -211,9 +224,7 @@ namespace csharp_biblioteca
                 for (int i = 0; i < ListaDocumentiDaFile.Length; i ++)
                 {
                     string[] documentoInArray = ListaDocumentiDaFile[i].Split('|');
-                    foreach(var element in ListaDocumentiDaFile[i].Split('|')){
-                        Console.WriteLine(element);
-                    };
+
                     if(documentoInArray[0] == "LIBRO")
                     {
                         List<Persona> autori = new List<Persona>();
