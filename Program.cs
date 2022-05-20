@@ -1,10 +1,51 @@
 ﻿using System;
 using System.IO;
+using System.Configuration;
+using System.Net;
 
 namespace csharp_biblioteca
 {
     internal class Program
     {
+        static string? ReadSetting(string key)
+        {
+            try
+            {
+                var appSettings = ConfigurationManager.AppSettings;
+                string result = appSettings[key] ?? "Not Found";
+                return result;
+            }
+            catch (ConfigurationErrorsException)
+            {
+                Console.WriteLine("Error reading app settings");
+                return null;
+            }
+        }
+
+        static bool AddUpdateAppSettings(string key, string value)
+        {
+            try
+            {
+                var configFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+                var settings = configFile.AppSettings.Settings;
+                if (settings[key] == null)
+                {
+                    settings.Add(key, value);
+                }
+                else
+                {
+                    settings[key].Value = value;
+                }
+                configFile.Save(ConfigurationSaveMode.Modified);
+                ConfigurationManager.RefreshSection(configFile.AppSettings.SectionInformation.Name);
+                return true;
+            }
+            catch (ConfigurationErrorsException)
+            {
+                Console.WriteLine("Error writing app settings");
+                return false;
+            }
+        }
         static void showMenu()
         {
             Console.WriteLine("**********************************");
@@ -190,50 +231,71 @@ namespace csharp_biblioteca
 
             string? evPublic = Environment.GetEnvironmentVariable("Public");
 
+            string folderName = "\\bool-experis-biblioteca";
             string fileNameUtenti = "lista_utenti.txt";
             string fileNameDocumenti = "lista_documenti.txt";
-            string folderName = "\\bool-experis-biblioteca";
             
             string pathToDirectory = evPublic + folderName;
             
-            if (!File.Exists(pathToDirectory + "\\config.txt"))
+            if (ReadSetting("DATA_PATH_TYPE") == "Not Found")
             {
                 if (!Directory.Exists(pathToDirectory))
                 {
                     Directory.CreateDirectory(pathToDirectory);
                 }
 
-                StreamWriter config = new StreamWriter(pathToDirectory + "\\config.txt");
+                //StreamWriter config = new StreamWriter(pathToDirectory + "\\config.txt");
                 Console.WriteLine("File di configurazione non presente:\n-> Premi invio per istanziare una configurazione locale\n-> Digita il path per la cartella remota");
                 string? pathRemoto = Console.ReadLine();
                 if(pathRemoto != "")
                 {
-                    config.WriteLine("section:config_remota");
-                    config.WriteLine(pathRemoto);
+                    //config.WriteLine("section:config_remota");
+                    //config.WriteLine(pathRemoto);
+                    AddUpdateAppSettings("DATA_PATH_TYPE", "remote");
+                    AddUpdateAppSettings("DATA_PATH", pathRemoto);
                     pathToDirectory = pathRemoto;
                 }
                 else
                 {
-                    config.WriteLine("section:config_locale");
+                    AddUpdateAppSettings("DATA_PATH_TYPE", "local");
                 }
-                config.Close();
+                //config.Close();
             } else 
             {
-                StreamReader readConfig = new StreamReader(pathToDirectory + "\\config.txt");
-                if (readConfig.ReadLine() == "section:config_remota")
+                //StreamReader readConfig = new StreamReader(pathToDirectory + "\\config.txt");
+                if (ReadSetting("DATA_PATH_TYPE") == "remote")
                 {
-                    pathToDirectory = readConfig.ReadLine();
-                    readConfig.Close();
+                    pathToDirectory = ReadSetting("DATA_PATH");
+                    
+                    /*
+                    FtpWebRequest richiesta = (FtpWebRequest)WebRequest.Create(pathToDirectory);
+                    richiesta.Credentials = new NetworkCredential("ftpuser", "ftpuser");
+                    richiesta.Method = WebRequestMethods.Ftp.ListDirectory;
+                    Console.WriteLine(richiesta.ToString());
+                    FtpWebResponse risposta = (FtpWebResponse)richiesta.GetResponse();
+
+                    StreamReader streamReader = new StreamReader(risposta.GetResponseStream());
+
+
+                    List<string> directories = new List<string>();
+
+                    string line = streamReader.ReadLine();
+                    while (!string.IsNullOrEmpty(line))
+                    {
+                        directories.Add(line);
+                        line = streamReader.ReadLine();
+                    }
+
+                    streamReader.Close();*/
+
                 }
+                //readConfig.Close();
 
             }
             fileNameUtenti = pathToDirectory + @"\" + fileNameUtenti;
             fileNameDocumenti = pathToDirectory + @"\" + fileNameDocumenti;
             
-        
-           
-            
-            
+            //carica utenti           
             if (File.Exists(fileNameUtenti))
             {
                 string[] ListaUtentiDaFile = File.ReadAllLines(fileNameUtenti);
@@ -247,7 +309,7 @@ namespace csharp_biblioteca
             {
                 miaBiblioteca.AddUtente("Giuseppe", "Savoia", "email@email.com", "12345", "3285754639");
             }
-
+            //caricadocumenti
             if (File.Exists(fileNameDocumenti))
             {
                 string[] ListaDocumentiDaFile = File.ReadAllLines(fileNameDocumenti);
